@@ -6,7 +6,7 @@ MongoClient.connect('mongodb://localhost:27017/TodoApp', (err, client)=>{
         return console.log('Unable to connect to the MongoDB server.')
     }
     // console.log('Connected to MongoDB server')
-    // const db = client.db('TodoApp')
+    const db = client.db('TodoApp')
     // // db.collection('Todos').insertOne({
     // //     text: 'Something to do',
     // //     completed: false
@@ -16,16 +16,16 @@ MongoClient.connect('mongodb://localhost:27017/TodoApp', (err, client)=>{
     // //     }
     // //     console.log(JSON.stringify(result.ops, undefined, 2))
     // // });
-    // db.collection('Users').insertOne({
-    //     name: 'Vlad',
-    //     age: 28,
-    //     location: 'Vancouver'
-    // }, (err, result)=>{
-    //     if(err){
-    //         return console.log('Unable to insert Users', err)
-    //     }
-    //     console.log(JSON.stringify(result.ops[0]._id.getTimestamp(), undefined, 2))
-    // });
+    db.collection('Users').insertOne({
+        name: 'Vlad',
+        age: 28,
+        location: 'Vancouver'
+    }, (err, result)=>{
+        if(err){
+            return console.log('Unable to insert Users', err)
+        }
+        console.log(JSON.stringify(result.ops[0]._id.getTimestamp(), undefined, 2))
+    });
 
-    // client.close();
+    client.close();
 });
