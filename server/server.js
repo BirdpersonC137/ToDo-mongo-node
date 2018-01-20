@@ -43,6 +43,28 @@ app.get('/todos/:id',(req, res)=>{
         res.status(400).send();
     })
 })
+
+app.delete('/todos/:id', (req, res)=>{
+    //get the id
+    let id = req.params.id
+    //validate the id -> not valid? return 404
+    if(!ObjectID.isValid(id)){
+        res.status(404).send()
+    }
+    //remove todo by id
+    Todo.findByIdAndRemove(id).then((todo)=>{
+        // if no doc - send 404
+        if(!todo){
+            return res.status(404).send()
+        }
+        //if doc existed send response back
+       res.send(todo);
+    }).catch((e)=>{
+        res.status(400).send()
+    })
+})
+
+
 app.listen(port, ()=>{
     console.log(`started up at ${port}`)
 })
