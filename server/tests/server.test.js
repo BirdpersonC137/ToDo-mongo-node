@@ -1,4 +1,5 @@
 const expect = require('expect')
+const should = require('should')
 const request = require('supertest')
 const {ObjectID} = require('mongodb')
 const {app} = require('./../server');
@@ -95,3 +96,33 @@ describe('GET /todos/:id', ()=>{
             .end(done)
     })
 })
+
+describe('Delete /todos/:id', ()=>{
+    'use strict'
+    it('should remove a todo', (done)=>{
+        let hexId = todos[1]._id.toHexString()
+        request(app)
+        .delete(`/todos/${hexId}`)
+        .expect(200)
+        .expect((res)=>{
+            expect(res.body.todo._id).toBe(hexId)
+        })
+        .end((err, res)=>{
+            if(err){
+                return done();
+            }
+            //query database using findById
+            Todo.findById(hexId).then((todo)=>{
+                console.log
+                should.not.exist(todo)
+                done();
+            }).catch((e)=>done(e));
+        })
+    })
+    // it('should return 404 if todo not found', (done)=>{
+
+    // })
+    // it('should terunr 404 if todo id is invalid', (done)=>{
+
+    // })
+});
