@@ -35,6 +35,6 @@ let token = jwt.sign(data, 'abc123')
 // jwt.verify
 console.log(token)
 
-let decoded = jwt.verify(token, 'abc123')
+let decoded =jwt.verify(token, 'abc123')
 
 console.log('decoded', decoded);
