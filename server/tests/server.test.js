@@ -1,5 +1,7 @@
+const expectjs = require('expect.js')
 const expect = require('expect')
 const should = require('should')
+const chai = require('chai')
 const request = require('supertest')
 const {ObjectID} = require('mongodb')
 const {app} = require('./../server');
@@ -202,7 +204,7 @@ describe('POST /users', ()=>{
             User.findOne({email}).then((user)=>{
                 expect(user).toBeTruthy();
                 done();
-            })
+            }).catch((e)=>done(e))
         })
     })
     it('should return validation errors if request invalid', (done)=>{
@@ -224,3 +226,42 @@ describe('POST /users', ()=>{
             .end(done)
     })
 })
+
+describe('POST /users/login', ()=>{
+    it('should login user and return auth token', (done)=>{
+        request(app)
+            .post('/users/login')
+            .send({
+                email: users[1].email,
+                password: users[1].password
+            })
+            .expect(200)
+            .expect((res)=>{
+                expect(res.headers['x-auth']).toBeTruthy();
+            })
+            .end((err, res)=>{
+                if(err){
+                    return done(err)
+                }            
+            User.findById(users[1]._id).then((user)=>{
+                expect(user.tokens[0].access).toBeTruthy()
+                expect(user.tokens[0].token).toBe(res.headers['x-auth'])
+                done()
+            }).catch((e)=>done(e))
+        })
+
+    });
+    it('should reject invalid login', (done)=>{
+        request(app)
+            .post('/users/login')
+            .send({
+                email: users[1].email,
+                password: users[1].password + '1'
+            })
+            .expect(400)
+            .expect((res)=>{
+                expect(res.headers['x-auth']).toBeFalsy()
+            })
+            .end(done)
+    })
+});
